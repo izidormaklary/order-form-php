@@ -8,15 +8,24 @@
 ---
 
 ## Required features
--[ ] Step 1: Validation
--[ ] Step 2: Make sure the address is saved
--[ ] Step 3: Switch between drinks and food
--[ ] Step 4: Calculate the delivery time
--[ ] Step 5: Total revenue counter
--[ ] Step 6: Send the e-mail
+- [ ] Step 1: Validation
+  
+- [ ] Step 2: Make sure the address is saved
+  
+- [ ] Step 3: Switch between drinks and food
+  
+- [ ] Step 4: Calculate the delivery time
+  
+- [ ] Step 5: Total revenue counter
+  
+- [ ] Step 6: Send the e-mail
+
 
 ## Nice to have features
--[ ] Change the checkboxes to an input field to accept a quantity.
--[ ] Change the price calculation and email to support buying multiple items.
--[ ] Make it possible to buy both drinks and food in one order. Still have the selections toggleable (no javascript!).
--[ ] Change the products to use Objects instead of an array.
+- [ ] Change the checkboxes to an input field to accept a quantity.
+ 
+- [ ] Change the price calculation and email to support buying multiple items.
+ 
+- [ ] Make it possible to buy both drinks and food in one order. Still have the selections toggleable (no javascript!).
+  
+- [ ] Change the products to use Objects instead of an array.
