@@ -8,11 +8,11 @@
 ---
 
 ## Required features
-- [ ] Step 1: Validation
+- [x] Step 1: Validation
   
-- [ ] Step 2: Make sure the address is saved
+- [x] Step 2: Make sure the address is saved
   
-- [ ] Step 3: Switch between drinks and food
+- [x] Step 3: Switch between drinks and food
   
 - [ ] Step 4: Calculate the delivery time
   
