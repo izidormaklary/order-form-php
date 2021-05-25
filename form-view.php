@@ -20,10 +20,16 @@
             <li class="nav-item">
                 <a class="nav-link" href="?food=0">Order drinks</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="?food=2">Order both</a>
+            </li>
         </ul>
     </nav>
 
-    <?php showError(); ?>
+    <?php showError();
+    if (valid()) {
+        global $message;
+        echo $message;}?>
 
     <form method="post">
         <div class="form-row">
@@ -68,7 +74,7 @@
             <?php
             foreach ( $products[$index] as $i => $product): ?>
                 <label>
-                    <input type="checkbox" value="1"
+                    <input type="number" min="1" max="5"
                            name="products[<?php echo $index ?>][<?php echo $i ?>]"/>
                     <?php echo $product['name'] ?> - &euro; <?php echo number_format($product['price'], 2) ?></label><br/>
             <?php endforeach; ?>

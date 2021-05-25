@@ -49,7 +49,17 @@ $products[1] = [
     ['name' => 'Club Chicken', 'price' => 4],
     ['name' => 'Club Salmon', 'price' => 5]
 ];
-
+$products[2] = [
+    ['name' => 'Cola', 'price' => 2],
+    ['name' => 'Fanta', 'price' => 2],
+    ['name' => 'Sprite', 'price' => 2],
+    ['name' => 'Ice-tea', 'price' => 3],
+    ['name' => 'Club Ham', 'price' => 3.20],
+    ['name' => 'Club Cheese', 'price' => 3],
+    ['name' => 'Club Cheese & Ham', 'price' => 4],
+    ['name' => 'Club Chicken', 'price' => 4],
+    ['name' => 'Club Salmon', 'price' => 5]
+];
 
 function test_input($data)
 {
@@ -113,33 +123,33 @@ if (isset($_POST['products'])) {
         $_SESSION['person']['zipcode'] = $zipcode;
     }
 
-
+$listProducts = array();
     $price = 0;
     for ($i = 0; count($products[$index]) > $i; $i++) {
 
-        if (isset($_POST['products'][$index][$i])) {
-            $price= $price + $products[$index][$i]['price'];
-            echo $products[$index][$i]['name'];
+        if (isset($_POST['products'][$index][$i]) && !$_POST['products'][$index][$i] == "0") {
+            $pieces= $_POST['products'][$index][$i];
+            $price= $price + ($products[$index][$i]['price']* $pieces);
+            $listProducts[] = $products[$index][$i]['name'] .":  ". $pieces;
 
         }
     };
-
-
     $newtotal = $_COOKIE['totalValue'] + $price;
     setcookie("totalValue", "$newtotal" );
 
-//    foreach ($products[$index] as $product){
-//        $nameToSearch = $product['name'];
-//        $arrayToLook =array_column($_SESSION['order'], 'name');
-//        $found =array_search($nameToSearch, $arrayToLook);
-//        if (!$found == false) {
-//            echo $arr[$found]['name'];
-//        }
-//    }
+$listProducts =  implode("</br>",$listProducts);
 
 
+$delivery= "+2 hours";
+$delcost= "";
+if (isset($_POST['express_delivery'])){
+$delivery= "+45 minutes";
+$delcost = "plus 5 € for express delivery";
 
-
+$finalprice = $_POST['express_delivery'] + $price;
+}
+    $d=strtotime($delivery);
+    $delivery = date("H:i", $d);
 }
 
 
@@ -147,14 +157,15 @@ if (isset($_POST['products'])) {
 function valid()
 {if (isset($_POST)) {
     global $errors;
+    global $price;
     if (count($errors) > 0) {
         $GLOBALS['classValid'] = 'alert-danger';
         return false;
-    } elseif (isset($_POST['products'])) {
+    } elseif (isset($_POST['products'])&& !$price== "0") {
 
         $GLOBALS['classValid'] = 'alert-success';
         return true;
-    } else {
+    } elseif($price== "0") {
         $GLOBALS['classValid'] = 'alert-warning';
         return "undefined";
     }
@@ -166,8 +177,9 @@ function showError()
     var_dump(valid());
     global $errors;
     global $classValid;
+
     if(valid() === "undefined"){
-        if (isset($_POST)){
+        if (isset($_POST) ){
             echo '<div class="alert ' . $classValid . '" role="alert"> Fill in your orders </div>';
         }
     }elseif (valid()) {
@@ -181,6 +193,25 @@ function showError()
 
 
 }
+
+//    $to      =  $_SESSION['person']['email'];
+//    $subject = 'order confirmation';
+    $message = 'Thank you for your order!'."</br>".
+                'Things you ordered:'."</br>".
+                $listProducts ."</br>".
+                'They will be delivered at the following address:'."</br>".
+        $_SESSION['person']['zipcode']." ".
+        $_SESSION['person']['city'].", ".
+        $_SESSION['person']['street']." street ".
+        $_SESSION['person']['streetnumber']."</br>".
+
+    'today around'.$delivery."</br>".
+    'the sum is:'.$price."€" .$delcost ;
+
+
+
+
+
 
 
 
