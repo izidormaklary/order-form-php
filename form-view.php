@@ -26,16 +26,13 @@
         </ul>
     </nav>
 
-    <?php showError();
-    if (valid()) {
-        global $message;
-        echo $message;}?>
+    <?php showError(); ?>
 
     <form method="post">
         <div class="form-row">
             <div class="form-group col-md-6">
                 <label for="email">E-mail:</label>
-                <input type="text" id="email" name="email" class="form-control" value="<?php global $email;if (!valid()) {echo $email;}elseif (isset($_SESSION['person'])){echo $_SESSION['person']['email'];} ?>" />
+                <input type="text" id="email" name="email" class="form-control" value="<?php global $email;if (isset($_SESSION['person']['email'])){echo $_SESSION['person']['email'];} elseif (!valid()) {echo $email;} ?>" />
             </div>
             <div></div>
         </div>
@@ -46,24 +43,24 @@
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="street">Street:</label>
-                    <input type="text" name="street" id="street" class="form-control" value="<?php global $street;if (!valid()) {echo $street;}elseif (isset($_SESSION['person'])){echo $_SESSION['person']['street'];} ?>" required>
+                    <input type="text" name="street" id="street" class="form-control" value="<?php global $street; if (isset($_SESSION['person']['street'])){echo $_SESSION['person']['street'];} elseif (!valid()) {echo $street;} ?>" required>
                 </div>
                 <div class=" form-group col-md-6">
                     <label for="streetnumber">Street number:</label>
                     <input type="text" id="streetnumber" name="streetnumber" class="form-control"
-                           value="<?php global $streetnumber; if (!valid()) {echo $streetnumber;}elseif (isset($_SESSION['person'])){echo $_SESSION['person']['streetnumber'];} ?>" required>
+                           value="<?php global $streetnumber;  if (isset($_SESSION['person']['streetnumber'])){echo $_SESSION['person']['streetnumber'];} elseif (!valid()) {echo $streetnumber;} ?>" required>
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="city">City:</label>
                     <input type="text" id="city" name="city" class="form-control"
-                           value="<?php global $city; if (!valid()) {echo $city;}elseif (isset($_SESSION['person'])){echo $_SESSION['person']['city'];} ?>" required>
+                           value="<?php global $city;  if (isset($_SESSION['person']['city'])){echo $_SESSION['person']['city'];} elseif (!valid()) {echo $city;} ?>" required>
                 </div>
                 <div class="form-group col-md-6">
                     <label for="zipcode">Zipcode</label>
                     <input type="text" id="zipcode" name="zipcode"
-                           value="<?php global $zipcode;if (!valid()) {echo $zipcode;}elseif (isset($_SESSION['person'])){echo $_SESSION['person']['zipcode'];} ?>"
+                           value="<?php global $zipcode; if (isset($_SESSION['person']['zipcode'])){echo $_SESSION['person']['zipcode'];} elseif (!valid()) {echo $zipcode;} ?>"
                            class="form-control required">
                 </div>
             </div>
@@ -74,7 +71,7 @@
             <?php
             foreach ( $products[$index] as $i => $product): ?>
                 <label>
-                    <input type="number" min="1" max="5"
+                    <input type="number" min="0" max="5" value="0"
                            name="products[<?php echo $index ?>][<?php echo $i ?>]"/>
                     <?php echo $product['name'] ?> - &euro; <?php echo number_format($product['price'], 2) ?></label><br/>
             <?php endforeach; ?>

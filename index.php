@@ -9,7 +9,7 @@ session_start();
 
 $errors = array();
 
-//$index = 1 ;
+
 if (!isset($_COOKIE['totalValue']))
 {
     setcookie("totalValue",  "0");
@@ -68,16 +68,6 @@ function test_input($data)
     $data = htmlspecialchars($data);
     return $data;
 }
-
-
-
-
-
-//if (!isset($_SESSION['order'])) {
-//    $_SESSION['order'] = array();
-//}
-
-
 if (isset($_POST['products'])) {
 
     $email = test_input($_POST["email"]);
@@ -127,11 +117,12 @@ $listProducts = array();
     $price = 0;
     for ($i = 0; count($products[$index]) > $i; $i++) {
 
-        if (isset($_POST['products'][$index][$i]) && !$_POST['products'][$index][$i] == "0") {
-            $pieces= $_POST['products'][$index][$i];
-            $price= $price + ($products[$index][$i]['price']* $pieces);
-            $listProducts[] = $products[$index][$i]['name'] .":  ". $pieces;
-
+        if (isset($_POST['products'][$index][$i])){
+if ($_POST['products'][$index][$i] == 0){ unset($_POST['products'][$index][$i]);}else {
+    $pieces = $_POST['products'][$index][$i];
+    $price += ($products[$index][$i]['price'] * $pieces);
+    $listProducts[] = $products[$index][$i]['name'] . ":  " . $pieces;
+}
         }
     };
     $newtotal = $_COOKIE['totalValue'] + $price;
@@ -156,68 +147,63 @@ $finalprice = $_POST['express_delivery'] + $price;
 
 function valid()
 {if (isset($_POST)) {
-    global $errors;
-    global $price;
-    if (count($errors) > 0) {
-        $GLOBALS['classValid'] = 'alert-danger';
-        return false;
-    } elseif (isset($_POST['products'])&& !$price== "0") {
+        global $errors;
+        global $index;
+        if (count($errors) > 0) {
+            $GLOBALS['classValid'] = 'alert-danger';
+            return false;
+        } elseif (isset($_POST['products'])&& !empty($_POST['products'][$index])) {
 
-        $GLOBALS['classValid'] = 'alert-success';
-        return true;
-    } elseif($price== "0") {
-        $GLOBALS['classValid'] = 'alert-warning';
-        return "undefined";
+            $GLOBALS['classValid'] = 'alert-success';
+            return true;
+        } else {
+            $GLOBALS['classValid'] = 'alert-warning';
+            return "undefined";
+        }
     }
-}
 }
 
 function showError()
 {
-    var_dump(valid());
-    global $errors;
-    global $classValid;
+    if (!empty($_POST)) {
+        var_dump(valid());
+        global $errors;
+        global $classValid;
+        global $index;
+global $message;
+        if (valid() === "undefined") {
+            if (empty($_POST['products'][$index])) {
+                echo '<div class="alert ' . $classValid . '" role="alert"> Fill in your orders </div>';
+            }
+        } elseif (valid() == true) {
 
-    if(valid() === "undefined"){
-        if (isset($_POST) ){
-            echo '<div class="alert ' . $classValid . '" role="alert"> Fill in your orders </div>';
+            echo '<div class="alert ' . $classValid . '" role="alert"> Order successfully sent </br> '. $message.'</div>';
+
+        } else {
+            $errorList = implode(", ", $errors);
+            echo '<div class="alert ' . $classValid . '" role="alert">' . $errorList . '</div>';
         }
-    }elseif (valid()) {
-
-        echo '<div class="alert ' . $classValid . '" role="alert"> Order successfully sent </div>';
-
-    } else {
-        $errorList = implode(", ", $errors);
-        echo '<div class="alert ' . $classValid . '" role="alert">' . $errorList . '</div>';
     }
-
 
 }
 
-//    $to      =  $_SESSION['person']['email'];
-//    $subject = 'order confirmation';
-    $message = 'Thank you for your order!'."</br>".
-                'Things you ordered:'."</br>".
-                $listProducts ."</br>".
-                'They will be delivered at the following address:'."</br>".
-        $_SESSION['person']['zipcode']." ".
-        $_SESSION['person']['city'].", ".
-        $_SESSION['person']['street']." street ".
-        $_SESSION['person']['streetnumber']."</br>".
+        $message ="</br>" .
+        'Things you ordered:' . "</br>" .
+        $listProducts . "</br></br>" .
+        'They will be delivered at the following address:' . "</br>" .
+        $_SESSION['person']['zipcode'] . " " .
+        $_SESSION['person']['city'] . ", " .
+        $_SESSION['person']['street'] . " street " .
+        $_SESSION['person']['streetnumber'] . "</br>" .
 
-    'today around'.$delivery."</br>".
-    'the sum is:'.$price."€" .$delcost ;
-
-
-
-
-
-
+        'today around ' . "<strong>".$delivery . " </strong></br></br>" .
+        'the sum is: '. "<strong>". $price . "€" . $delcost. "</strong>" ;
 
 
 whatIsHappening();
-
 require 'form-view.php';
+
+
 //if ( valid()){
 //    $_SESSION['order'] = array();
 //}
