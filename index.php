@@ -124,7 +124,7 @@ if ($_POST['products'][$index][$i] == 0){ unset($_POST['products'][$index][$i]);
     $listProducts[] = $products[$index][$i]['name'] . ":  " . $pieces;
 }
         }
-    };
+    }
     $newtotal = $_COOKIE['totalValue'] + $price;
     setcookie("totalValue", "$newtotal" );
 
@@ -154,6 +154,7 @@ function valid()
             return false;
         } elseif (isset($_POST['products'])&& !empty($_POST['products'][$index])) {
 
+
             $GLOBALS['classValid'] = 'alert-success';
             return true;
         } else {
@@ -166,11 +167,11 @@ function valid()
 function showError()
 {
     if (!empty($_POST)) {
-        var_dump(valid());
+
         global $errors;
         global $classValid;
         global $index;
-global $message;
+        global $message;
         if (valid() === "undefined") {
             if (empty($_POST['products'][$index])) {
                 echo '<div class="alert ' . $classValid . '" role="alert"> Fill in your orders </div>';
@@ -184,10 +185,10 @@ global $message;
             echo '<div class="alert ' . $classValid . '" role="alert">' . $errorList . '</div>';
         }
     }
-
 }
-
-        $message ="</br>" .
+if ( valid() !== "undefined" && valid() == true)
+{
+    $message = "</br>" .
         'Things you ordered:' . "</br>" .
         $listProducts . "</br></br>" .
         'They will be delivered at the following address:' . "</br>" .
@@ -196,14 +197,8 @@ global $message;
         $_SESSION['person']['street'] . " street " .
         $_SESSION['person']['streetnumber'] . "</br>" .
 
-        'today around ' . "<strong>".$delivery . " </strong></br></br>" .
-        'the sum is: '. "<strong>". $price . "€" . $delcost. "</strong>" ;
-
-
-whatIsHappening();
+        'today around ' . "<strong>" . $delivery . " </strong></br></br>" .
+        'the sum is: ' . "<strong>" . $price . "€" . $delcost . "</strong>";
+}
 require 'form-view.php';
 
-
-//if ( valid()){
-//    $_SESSION['order'] = array();
-//}
