@@ -2,14 +2,25 @@
 //this line makes PHP behave in a more strict way
 declare(strict_types=1);
 
+
 //we are going to use session variables so we need to enable sessions
 session_set_cookie_params(0);
 session_start();
+
 $errors = array();
-$index = 1;
-if (isset($_GET['food'])){
+
+//$index = 1 ;
+if (!isset($_COOKIE['totalValue']))
+{
+    setcookie("totalValue",  "0");
+}
+
+if (!isset($_GET['food'])) {
+    $index = 1;
+}else {
     $index = $_GET['food'];
 }
+
 function whatIsHappening()
 {
     echo '<h2>$_GET</h2>';
@@ -23,6 +34,14 @@ function whatIsHappening()
 }
 
 //your products with their price.
+
+
+$products[0] = [
+    ['name' => 'Cola', 'price' => 2],
+    ['name' => 'Fanta', 'price' => 2],
+    ['name' => 'Sprite', 'price' => 2],
+    ['name' => 'Ice-tea', 'price' => 3],
+];
 $products[1] = [
     ['name' => 'Club Ham', 'price' => 3.20],
     ['name' => 'Club Cheese', 'price' => 3],
@@ -31,14 +50,7 @@ $products[1] = [
     ['name' => 'Club Salmon', 'price' => 5]
 ];
 
-$products[0] = [
-    ['name' => 'Cola', 'price' => 2],
-    ['name' => 'Fanta', 'price' => 2],
-    ['name' => 'Sprite', 'price' => 2],
-    ['name' => 'Ice-tea', 'price' => 3],
-];
 
-$totalValue = 0;
 function test_input($data)
 {
     $data = trim($data);
@@ -48,7 +60,15 @@ function test_input($data)
 }
 
 
-if (!empty($_POST)) {
+
+
+
+//if (!isset($_SESSION['order'])) {
+//    $_SESSION['order'] = array();
+//}
+
+
+if (isset($_POST['products'])) {
 
     $email = test_input($_POST["email"]);
     $street = test_input($_POST["street"]);
@@ -65,64 +85,108 @@ if (!empty($_POST)) {
             global $errors;
             $errors[] = "invalid email format";
         }else{
-            $_SESSION['email'] = $email;
+            $_SESSION['person']['email'] = $email;
         }
     }
 
     if (!preg_match("/^[a-zA-Z-' ]*$/", $street)) {
         $errors[] = "invalid street name";
     }else{
-        $_SESSION['street'] = $street;
+        $_SESSION['person']['street'] = $street;
     }
 
     if (!preg_match("/^[a-zA-Z-' ]*$/", $city)) {
         $errors[] = "invalid city name";
     }else{
-        $_SESSION['city'] = $city;
+        $_SESSION['person']['city'] = $city;
     }
 
     if (!preg_match("/^[1-9][0-9]{1,4}$/", $streetnumber)) {
         $errors[] = "invalid street number";
     }else{
-        $_SESSION['streetnumber'] = $streetnumber;
+        $_SESSION['person']['streetnumber'] = $streetnumber;
     }
 
     if (!preg_match("/^[1-9][0-9]{0,3}$/", $zipcode)) {
         $errors[] = "invalid zip code";
     }else{
-        $_SESSION['zipcode'] = $zipcode;
+        $_SESSION['person']['zipcode'] = $zipcode;
     }
 
 
+    $price = 0;
+    for ($i = 0; count($products[$index]) > $i; $i++) {
+
+        if (isset($_POST['products'][$index][$i])) {
+            $price= $price + $products[$index][$i]['price'];
+            echo $products[$index][$i]['name'];
+
+        }
+    };
+
+
+    $newtotal = $_COOKIE['totalValue'] + $price;
+    setcookie("totalValue", "$newtotal" );
+
+//    foreach ($products[$index] as $product){
+//        $nameToSearch = $product['name'];
+//        $arrayToLook =array_column($_SESSION['order'], 'name');
+//        $found =array_search($nameToSearch, $arrayToLook);
+//        if (!$found == false) {
+//            echo $arr[$found]['name'];
+//        }
+//    }
+
+
+
+
 }
+
+
+
 function valid()
-{
+{if (isset($_POST)) {
     global $errors;
     if (count($errors) > 0) {
         $GLOBALS['classValid'] = 'alert-danger';
         return false;
-    } else {
+    } elseif (isset($_POST['products'])) {
+
         $GLOBALS['classValid'] = 'alert-success';
         return true;
+    } else {
+        $GLOBALS['classValid'] = 'alert-warning';
+        return "undefined";
     }
 }
+}
+
 function showError()
 {
+    var_dump(valid());
     global $errors;
     global $classValid;
-    if(valid()== 'undefined'){
-
+    if(valid() === "undefined"){
+        if (isset($_POST)){
+            echo '<div class="alert ' . $classValid . '" role="alert"> Fill in your orders </div>';
+        }
     }elseif (valid()) {
+
         echo '<div class="alert ' . $classValid . '" role="alert"> Order successfully sent </div>';
+
     } else {
-        $errorList = implode(" ,", $errors);
+        $errorList = implode(", ", $errors);
         echo '<div class="alert ' . $classValid . '" role="alert">' . $errorList . '</div>';
     }
 
 
 }
 
+
+
 whatIsHappening();
 
 require 'form-view.php';
-
+//if ( valid()){
+//    $_SESSION['order'] = array();
+//}

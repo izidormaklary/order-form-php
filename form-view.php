@@ -29,7 +29,7 @@
         <div class="form-row">
             <div class="form-group col-md-6">
                 <label for="email">E-mail:</label>
-                <input type="text" id="email" name="email" class="form-control" value="<?php global $email;if (!valid()) {echo $email;}elseif (isset($_SESSION['email'])){echo $_SESSION['email'];} ?>" />
+                <input type="text" id="email" name="email" class="form-control" value="<?php global $email;if (!valid()) {echo $email;}elseif (isset($_SESSION['person'])){echo $_SESSION['person']['email'];} ?>" />
             </div>
             <div></div>
         </div>
@@ -40,24 +40,24 @@
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="street">Street:</label>
-                    <input type="text" name="street" id="street" class="form-control" value="<?php global $street;if (!valid()) {echo $street;}elseif (isset($_SESSION['street'])){echo $_SESSION['street'];} ?>" required>
+                    <input type="text" name="street" id="street" class="form-control" value="<?php global $street;if (!valid()) {echo $street;}elseif (isset($_SESSION['person'])){echo $_SESSION['person']['street'];} ?>" required>
                 </div>
                 <div class=" form-group col-md-6">
                     <label for="streetnumber">Street number:</label>
                     <input type="text" id="streetnumber" name="streetnumber" class="form-control"
-                           value="<?php global $streetnumber; if (!valid()) {echo $streetnumber;}elseif (isset($_SESSION['streetnumber'])){echo $_SESSION['streetnumber'];} ?>" required>
+                           value="<?php global $streetnumber; if (!valid()) {echo $streetnumber;}elseif (isset($_SESSION['person'])){echo $_SESSION['person']['streetnumber'];} ?>" required>
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="city">City:</label>
                     <input type="text" id="city" name="city" class="form-control"
-                           value="<?php global $city; if (!valid()) {echo $city;}elseif (isset($_SESSION['city'])){echo $_SESSION['city'];} ?>" required>
+                           value="<?php global $city; if (!valid()) {echo $city;}elseif (isset($_SESSION['person'])){echo $_SESSION['person']['city'];} ?>" required>
                 </div>
                 <div class="form-group col-md-6">
                     <label for="zipcode">Zipcode</label>
                     <input type="text" id="zipcode" name="zipcode"
-                           value="<?php global $zipcode;if (!valid()) {echo $zipcode;}elseif (isset($_SESSION['zipcode'])){echo $_SESSION['zipcode'];} ?>"
+                           value="<?php global $zipcode;if (!valid()) {echo $zipcode;}elseif (isset($_SESSION['person'])){echo $_SESSION['person']['zipcode'];} ?>"
                            class="form-control required">
                 </div>
             </div>
@@ -68,9 +68,9 @@
             <?php
             foreach ( $products[$index] as $i => $product): ?>
                 <label>
-                    <input type="checkbox" value="1" name="products[<?php echo $i ?>]"/> <?php echo $product['name'] ?>
-                    -
-                    &euro; <?php echo number_format($product['price'], 2) ?></label><br/>
+                    <input type="checkbox" value="1"
+                           name="products[<?php echo $index ?>][<?php echo $i ?>]"/>
+                    <?php echo $product['name'] ?> - &euro; <?php echo number_format($product['price'], 2) ?></label><br/>
             <?php endforeach; ?>
         </fieldset>
 
@@ -82,7 +82,7 @@
         <button type="submit" class="btn btn-primary">Order!</button>
     </form>
 
-    <footer>You already ordered <strong>&euro; <?php echo $totalValue ?></strong> in food and drinks.</footer>
+    <footer>You already ordered <strong>&euro; <?php echo $_COOKIE['totalValue'] ?></strong> in food and drinks.</footer>
 </div>
 
 <style>
