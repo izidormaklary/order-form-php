@@ -71,7 +71,7 @@
             <?php
             foreach ( $products[$index] as $i => $product): ?>
                 <label>
-                    <input type="number" min="0" max="5" value="0"
+                    <input type="number" min="0" max="5" value="0" class="form-control"
                            name="products[<?php echo $index ?>][<?php echo $i ?>]"/>
                     <?php echo $product['name'] ?> - &euro; <?php echo number_format($product['price'], 2) ?></label><br/>
             <?php endforeach; ?>
