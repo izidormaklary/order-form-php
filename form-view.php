@@ -73,7 +73,7 @@
                 <label>
                     <input type="number" min="0" max="5" value="0" class="form-control"
                            name="products[<?php echo $index ?>][<?php echo $i ?>]"/>
-                    <?php echo $product['name'] ?> - &euro; <?php echo number_format($product['price'], 2) ?></label><br/>
+                    <?php echo $product->getName() ?> - &euro; <?php echo number_format($product->getPrice(), 2) ?></label><br/>
             <?php endforeach; ?>
         </fieldset>
 
