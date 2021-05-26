@@ -10,14 +10,13 @@ session_start();
 $errors = array();
 
 
-if (!isset($_COOKIE['totalValue']))
-{
-    setcookie("totalValue",  "0");
+if (!isset($_COOKIE['totalValue'])) {
+    setcookie("totalValue", "0");
 }
 
 if (!isset($_GET['food'])) {
     $index = 1;
-}else {
+} else {
     $index = $_GET['food'];
 }
 
@@ -37,30 +36,70 @@ function whatIsHappening()
 
 
 $products[0] = [
-    ['name' => 'Cola', 'price' => 2],
-    ['name' => 'Fanta', 'price' => 2],
-    ['name' => 'Sprite', 'price' => 2],
-    ['name' => 'Ice-tea', 'price' => 3],
+    $Cola = new Product ('Cola', 2),
+    $Fanta = new Product ('Fanta', 2),
+    $Sprite = new Product ('Sprite', 2),
+    $tea = new Product ('Ice-tea', 3)
 ];
 $products[1] = [
-    ['name' => 'Club Ham', 'price' => 3.20],
-    ['name' => 'Club Cheese', 'price' => 3],
-    ['name' => 'Club Cheese & Ham', 'price' => 4],
-    ['name' => 'Club Chicken', 'price' => 4],
-    ['name' => 'Club Salmon', 'price' => 5]
+    $Ham = new Product ('Club Ham', 3.20),
+    $Cheese = new Product ('Club Cheese', 3),
+    $CheeseHam = new Product ('Club Cheese & Ham', 4),
+    $Chicken = new Product ('Club Chicken', 4),
+    $Salmon = new Product ('Club Salmon', 5)
 ];
-$products[2] = [
-    ['name' => 'Cola', 'price' => 2],
-    ['name' => 'Fanta', 'price' => 2],
-    ['name' => 'Sprite', 'price' => 2],
-    ['name' => 'Ice-tea', 'price' => 3],
-    ['name' => 'Club Ham', 'price' => 3.20],
-    ['name' => 'Club Cheese', 'price' => 3],
-    ['name' => 'Club Cheese & Ham', 'price' => 4],
-    ['name' => 'Club Chicken', 'price' => 4],
-    ['name' => 'Club Salmon', 'price' => 5]
-];
+$products[2] = array_merge($products[0],$products[1]);
 
+
+class  Product
+{
+    protected string $name;
+    protected float $price;
+    protected int $quantity = 0;
+    public static float $totalPrice = 0;
+
+    public function __construct(string $name, float $price)
+    {
+        $this->name = $name;
+        $this->price = $price;
+    }
+
+    public function setQuantity(int $quantity): void
+    {
+        $this->quantity = $quantity;
+        self:: $totalPrice += $this->sumOfFood();
+    }
+
+    function sumOfFood()
+    {
+        return $this->quantity * $this->price;
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+
+    public function getPrice(): float
+    {
+        return $this->price;
+    }
+
+
+    public function getQuantity(): int
+    {
+        return $this->quantity;
+    }
+
+    public function toList()
+    {
+        return $this->name . ":  " . $this->quantity;
+
+    }
+
+
+}
 function test_input($data)
 {
     $data = trim($data);
@@ -68,91 +107,95 @@ function test_input($data)
     $data = htmlspecialchars($data);
     return $data;
 }
-if (isset($_POST['products'])) {
+if (isset($_POST['products']))
+{
 
     $email = test_input($_POST["email"]);
     $street = test_input($_POST["street"]);
     $streetnumber = test_input($_POST["streetnumber"]);
     $city = test_input($_POST["city"]);
     $zipcode = test_input($_POST["zipcode"]);
-    if (empty($_POST["email"])) {
-        global $errors;
-        $errors[] = "email required";
-    } else {
-        $email = test_input($_POST["email"]);
-        // check if e-mail address is well-formed
+    if (empty($_POST["email"]))
+    {
+    global $errors;
+    $errors[] = "email required";
+    }else{
+    $email = test_input($_POST["email"]);
+    // check if e-mail address is well-formed
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
             global $errors;
             $errors[] = "invalid email format";
-        }else{
+        } else {
             $_SESSION['person']['email'] = $email;
         }
     }
 
     if (!preg_match("/^[a-zA-Z-' ]*$/", $street)) {
         $errors[] = "invalid street name";
-    }else{
+    } else {
         $_SESSION['person']['street'] = $street;
     }
 
     if (!preg_match("/^[a-zA-Z-' ]*$/", $city)) {
         $errors[] = "invalid city name";
-    }else{
+    } else {
         $_SESSION['person']['city'] = $city;
     }
 
     if (!preg_match("/^[1-9][0-9]{1,4}$/", $streetnumber)) {
         $errors[] = "invalid street number";
-    }else{
+    } else {
         $_SESSION['person']['streetnumber'] = $streetnumber;
     }
 
     if (!preg_match("/^[1-9][0-9]{0,3}$/", $zipcode)) {
         $errors[] = "invalid zip code";
-    }else{
+    } else {
         $_SESSION['person']['zipcode'] = $zipcode;
     }
 
-$listProducts = array();
+    $listProducts = array();
     $price = 0;
     for ($i = 0; count($products[$index]) > $i; $i++) {
+        $obj = $products[$index][$i];
 
-        if (isset($_POST['products'][$index][$i])){
-if ($_POST['products'][$index][$i] == 0){ unset($_POST['products'][$index][$i]);}else {
-    $pieces = $_POST['products'][$index][$i];
-    $price += ($products[$index][$i]['price'] * $pieces);
-    $listProducts[] = $products[$index][$i]['name'] . ":  " . $pieces;
-}
+        if ($_POST['products'][$index][$i] > 0) {
+            $obj->setQuantity(intval($_POST['products'][$index][$i]));
+
+            $price += $obj->sumOfFood();
+            $listProducts[] = $obj->toList();
         }
+
     }
-    $newtotal = $_COOKIE['totalValue'] + $price;
-    setcookie("totalValue", "$newtotal" );
+    $newtotal = $_COOKIE['totalValue'] + Product::$totalPrice;
 
-$listProducts =  implode("</br>",$listProducts);
+    setcookie("totalValue", "$newtotal");
+
+    $listProducts = implode("</br>", $listProducts);
 
 
-$delivery= "+2 hours";
-$delcost= "";
-if (isset($_POST['express_delivery'])){
-$delivery= "+45 minutes";
-$delcost = "plus 5 € for express delivery";
+    $delivery = "+2 hours";
+    $delcost = "";
+        if (isset($_POST['express_delivery'])) {
+            $delivery = "+45 minutes";
+            $delcost = "plus 5 € for express delivery";
 
-$finalprice = $_POST['express_delivery'] + $price;
-}
-    $d=strtotime($delivery);
+            $finalprice = $_POST['express_delivery'] + $price;
+        }
+    $d = strtotime($delivery);
     $delivery = date("H:i", $d);
 }
 
 
-
 function valid()
-{if (isset($_POST)) {
+{
+    if (isset($_POST)) {
         global $errors;
         global $index;
         if (count($errors) > 0) {
             $GLOBALS['classValid'] = 'alert-danger';
             return false;
-        } elseif (isset($_POST['products'])&& !empty($_POST['products'][$index])) {
+        } elseif (isset($_POST['products']) && !empty($_POST['products'][$index])) {
 
 
             $GLOBALS['classValid'] = 'alert-success';
@@ -178,7 +221,7 @@ function showError()
             }
         } elseif (valid() == true) {
 
-            echo '<div class="alert ' . $classValid . '" role="alert"> Order successfully sent </br> '. $message.'</div>';
+            echo '<div class="alert ' . $classValid . '" role="alert"> Order successfully sent </br> ' . $message . '</div>';
 
         } else {
             $errorList = implode(", ", $errors);
@@ -186,8 +229,8 @@ function showError()
         }
     }
 }
-if ( valid() !== "undefined" && valid() == true)
-{
+
+if (valid() !== "undefined" && valid() == true) {
     $message = "</br>" .
         'Things you ordered:' . "</br>" .
         $listProducts . "</br></br>" .
@@ -198,7 +241,7 @@ if ( valid() !== "undefined" && valid() == true)
         $_SESSION['person']['streetnumber'] . "</br>" .
 
         'today around ' . "<strong>" . $delivery . " </strong></br></br>" .
-        'the sum is: ' . "<strong>" . $price . "€" . $delcost . "</strong>";
+        'the sum is: ' . "<strong>" . Product::$totalPrice . "€" . $delcost . "</strong>";
 }
 require 'form-view.php';
 
