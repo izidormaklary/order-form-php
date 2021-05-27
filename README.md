@@ -1,6 +1,6 @@
 # Order form
 
-##goals
+## goals
 
 - Be able to tell the difference between the superglobals
 - Be able to write basic validation for PHP.
