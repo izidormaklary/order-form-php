@@ -32,7 +32,11 @@
         <div class="form-row">
             <div class="form-group col-md-6">
                 <label for="email">E-mail:</label>
-                <input type="text" id="email" name="email" class="form-control" value="<?php global $email;if (isset($_SESSION['person']['email'])){echo $_SESSION['person']['email'];} elseif (!valid()) {echo $email;} ?>" />
+                <input type="text" id="email" name="email" class="form-control" value="<?php if(isset($_SESSION['person'])){
+                   echo $_SESSION['person']->getEmail();
+                } elseif(!empty($_POST)){
+                    echo $person->getEmail();
+                } ?>" />
             </div>
             <div></div>
         </div>
@@ -43,25 +47,41 @@
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="street">Street:</label>
-                    <input type="text" name="street" id="street" class="form-control" value="<?php global $street; if (isset($_SESSION['person']['street'])){echo $_SESSION['person']['street'];} elseif (!valid()) {echo $street;} ?>" required>
+                    <input type="text" name="street" id="street" class="form-control" value="<?php if(isset($_SESSION['person'])){
+                        echo $_SESSION['person']->getStreet();
+                    } elseif(!empty($_POST)){
+                        echo $person->getStreet();
+                    } ?>" required>
                 </div>
                 <div class=" form-group col-md-6">
                     <label for="streetnumber">Street number:</label>
                     <input type="text" id="streetnumber" name="streetnumber" class="form-control"
-                           value="<?php global $streetnumber;  if (isset($_SESSION['person']['streetnumber'])){echo $_SESSION['person']['streetnumber'];} elseif (!valid()) {echo $streetnumber;} ?>" required>
+                           value="<?php if(isset($_SESSION['person'])){
+                               echo $_SESSION['person']->getStreetnumber();
+                           } elseif(!empty($_POST)){
+                               echo $person->getStreetnumber();
+                           }?>" required>
                 </div>
             </div>
             <div class="form-row">
                 <div class="form-group col-md-6">
                     <label for="city">City:</label>
                     <input type="text" id="city" name="city" class="form-control"
-                           value="<?php global $city;  if (isset($_SESSION['person']['city'])){echo $_SESSION['person']['city'];} elseif (!valid()) {echo $city;} ?>" required>
+                           value="<?php if(isset($_SESSION['person'])){
+                               echo $_SESSION['person']->getCity();
+                           } elseif(!empty($_POST)){
+                               echo $person->getCity();
+                           }?>" required>
                 </div>
                 <div class="form-group col-md-6">
                     <label for="zipcode">Zipcode</label>
                     <input type="text" id="zipcode" name="zipcode"
-                           value="<?php global $zipcode; if (isset($_SESSION['person']['zipcode'])){echo $_SESSION['person']['zipcode'];} elseif (!valid()) {echo $zipcode;} ?>"
-                           class="form-control required">
+                           value="<?php if(isset($_SESSION['person'])){
+                               echo $_SESSION['person']->getZip();
+                           } elseif(!empty($_POST)){
+                               echo $person->getZip();
+                           } ?>"
+                           class="form-control" required />
                 </div>
             </div>
         </fieldset>
