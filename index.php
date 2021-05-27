@@ -87,72 +87,113 @@ class  Product
     }
 
 
-    public function getQuantity(): int
-    {
-        return $this->quantity;
-    }
-
     public function toList()
     {
         return $this->name . ":  " . $this->quantity;
 
     }
-
-
 }
-function test_input($data)
-{
-    $data = trim($data);
-    $data = stripslashes($data);
-    $data = htmlspecialchars($data);
-    return $data;
+
+class Person {
+    private string $email;
+    private string $zip;
+    private string $city;
+    private string $street;
+    private string $streetnumber;
+    static array $errors = array();
+
+    public function __construct(string $email, string $zip, string $city, string $street, string $streetnumber)
+    {
+        $this->email = $this-> test_input($email);
+        $this->zip = $this-> test_input($zip);
+        $this->city = $this-> test_input($city);
+        $this->street= $this-> test_input($street);
+        $this->streetnumber= $this-> test_input($streetnumber);
+        $this->testHub();
+
+    }
+
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+     public function getZip(): string
+    {
+        return $this->zip;
+    }
+
+       public function getCity(): string
+    {
+        return $this->city;
+    }
+
+     public function getStreet(): string
+    {
+        return $this->street;
+    }
+
+
+    public function getStreetnumber(): string
+    {
+        return $this->streetnumber;
+    }
+
+    function testmail(){
+        if (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
+
+            self::$errors[] = "invalid email format";
+        }
+    }
+    function teststreet(){
+        if (!preg_match("/^[a-zA-Z-' ]*$/", $this->street)) {
+            self::$errors[] = "invalid street name";
+        }
+    }
+    function testcity(){
+        if (!preg_match("/^[a-zA-Z-' ]*$/", $this->city)) {
+            self::$errors[] = "invalid city name";
+        }
+    }function teststreetnum(){
+        if (!preg_match("/^[1-9][0-9]{1,4}$/", $this->streetnumber))
+        {
+            self::$errors[] = "invalid street number";
+        }
+    }
+    function testZip(){
+        if (!preg_match("/^[1-9][0-9]{0,3}$/", $this->zip)) {
+            self::$errors[] = "invalid zip code";
+        }
+    }
+    function testHub(){
+        $this->testZip();
+        $this->teststreetnum();
+        $this->teststreet();
+        $this->testmail();
+        $this->testcity();
+        if (empty(self::$errors)){
+            $_SESSION['person']= $this;
+        }
+    }
+    function test_input($data)
+    {
+        $data = trim($data);
+        $data = stripslashes($data);
+        $data = htmlspecialchars($data);
+        return $data;
+    }
+    function listErrors(){
+        return implode(", ", self::$errors);
+    }
+    function showAdress(){
+        return 'They will be delivered at the following address:' . "</br>" .
+            $this->zip . " " . $this->city . ", " . $this->street . " street " . $this->streetnumber . "</br>";
+    }
 }
 if (isset($_POST['products']))
 {
-
-    $email = test_input($_POST["email"]);
-    $street = test_input($_POST["street"]);
-    $streetnumber = test_input($_POST["streetnumber"]);
-    $city = test_input($_POST["city"]);
-    $zipcode = test_input($_POST["zipcode"]);
-    if (empty($_POST["email"]))
-    {
-    global $errors;
-    $errors[] = "email required";
-    }else{
-    $email = test_input($_POST["email"]);
-    // check if e-mail address is well-formed
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            global $errors;
-            $errors[] = "invalid email format";
-        } else {
-            $_SESSION['person']['email'] = $email;
-        }
-    }
-
-    if (!preg_match("/^[a-zA-Z-' ]*$/", $street)) {
-        $errors[] = "invalid street name";
-    } else {
-        $_SESSION['person']['street'] = $street;
-    }
-
-    if (!preg_match("/^[a-zA-Z-' ]*$/", $city)) {
-        $errors[] = "invalid city name";
-    } else {
-        $_SESSION['person']['city'] = $city;
-    }
-
-    if (!preg_match("/^[1-9][0-9]{1,4}$/", $streetnumber)) {
-        $errors[] = "invalid street number";
-    } else {
-        $_SESSION['person']['streetnumber'] = $streetnumber;
-    }
-
-    if (!preg_match("/^[1-9][0-9]{0,3}$/", $zipcode)) {
-        $errors[] = "invalid zip code";
-    } else {
-        $_SESSION['person']['zipcode'] = $zipcode;
-    }
+    whatIsHappening();
+    $person = new Person( $_POST['email'], $_POST['zipcode'], $_POST['city'], $_POST['street'], $_POST['streetnumber']);
 
     $listProducts = array();
     $price = 0;
@@ -190,12 +231,10 @@ if (isset($_POST['products']))
 function valid()
 {
     if (isset($_POST)) {
-        global $errors;
-        global $index;
-        if (count($errors) > 0) {
+        if (count(Person::$errors) > 0) {
             $GLOBALS['classValid'] = 'alert-danger';
             return false;
-        } elseif (isset($_POST['products']) && !empty($_POST['products'][$index])) {
+        } elseif (Product::$totalPrice>0) {
 
 
             $GLOBALS['classValid'] = 'alert-success';
@@ -211,7 +250,7 @@ function showError()
 {
     if (!empty($_POST)) {
 
-        global $errors;
+        global $person;
         global $classValid;
         global $index;
         global $message;
@@ -224,8 +263,8 @@ function showError()
             echo '<div class="alert ' . $classValid . '" role="alert"> Order successfully sent </br> ' . $message . '</div>';
 
         } else {
-            $errorList = implode(", ", $errors);
-            echo '<div class="alert ' . $classValid . '" role="alert">' . $errorList . '</div>';
+
+            echo '<div class="alert ' . $classValid . '" role="alert">' . $person ->listErrors(). '</div>';
         }
     }
 }
@@ -234,11 +273,7 @@ if (valid() !== "undefined" && valid() == true) {
     $message = "</br>" .
         'Things you ordered:' . "</br>" .
         $listProducts . "</br></br>" .
-        'They will be delivered at the following address:' . "</br>" .
-        $_SESSION['person']['zipcode'] . " " .
-        $_SESSION['person']['city'] . ", " .
-        $_SESSION['person']['street'] . " street " .
-        $_SESSION['person']['streetnumber'] . "</br>" .
+      $person->showAdress() .
 
         'today around ' . "<strong>" . $delivery . " </strong></br></br>" .
         'the sum is: ' . "<strong>" . Product::$totalPrice . "€" . $delcost . "</strong>";
