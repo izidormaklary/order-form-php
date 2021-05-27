@@ -175,7 +175,7 @@ class Person {
             $_SESSION['person']= $this;
         }
     }
-    function test_input($data)
+    function test_input($data) : string
     {
         $data = trim($data);
         $data = stripslashes($data);
@@ -255,7 +255,7 @@ function showError()
         global $index;
         global $message;
         if (valid() === "undefined") {
-            if (empty($_POST['products'][$index])) {
+            if (Product::$totalPrice == 0) {
                 echo '<div class="alert ' . $classValid . '" role="alert"> Fill in your orders </div>';
             }
         } elseif (valid() == true) {
