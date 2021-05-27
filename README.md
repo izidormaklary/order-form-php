@@ -28,4 +28,4 @@
  
 - [x] Make it possible to buy both drinks and food in one order. Still have the selections toggleable (no javascript!).
   
-- [ ] Change the products to use Objects instead of an array.
+- [x] Change the products to use Objects instead of an array.
