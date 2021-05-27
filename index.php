@@ -2,7 +2,7 @@
 //this line makes PHP behave in a more strict way
 declare(strict_types=1);
 
-
+require_once ('person.php');
 //we are going to use session variables so we need to enable sessions
 session_set_cookie_params(0);
 session_start();
@@ -33,7 +33,7 @@ function whatIsHappening()
 }
 
 //your products with their price.
-
+require_once ('product.php');
 
 $products[0] = [
     $Cola = new Product ('Cola', 2),
@@ -51,148 +51,11 @@ $products[1] = [
 $products[2] = array_merge($products[0],$products[1]);
 
 
-class  Product
-{
-    protected string $name;
-    protected float $price;
-    protected int $quantity = 0;
-    public static float $totalPrice = 0;
-
-    public function __construct(string $name, float $price)
-    {
-        $this->name = $name;
-        $this->price = $price;
-    }
-
-    public function setQuantity(int $quantity): void
-    {
-        $this->quantity = $quantity;
-        self:: $totalPrice += $this->sumOfFood();
-    }
-
-    function sumOfFood()
-    {
-        return $this->quantity * $this->price;
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
 
 
-    public function getPrice(): float
-    {
-        return $this->price;
-    }
 
-
-    public function toList()
-    {
-        return $this->name . ":  " . $this->quantity;
-
-    }
-}
-
-class Person {
-    private string $email;
-    private string $zip;
-    private string $city;
-    private string $street;
-    private string $streetnumber;
-    static array $errors = array();
-
-    public function __construct(string $email, string $zip, string $city, string $street, string $streetnumber)
-    {
-        $this->email = $this-> test_input($email);
-        $this->zip = $this-> test_input($zip);
-        $this->city = $this-> test_input($city);
-        $this->street= $this-> test_input($street);
-        $this->streetnumber= $this-> test_input($streetnumber);
-        $this->testHub();
-
-    }
-
-    public function getEmail(): string
-    {
-        return $this->email;
-    }
-
-     public function getZip(): string
-    {
-        return $this->zip;
-    }
-
-       public function getCity(): string
-    {
-        return $this->city;
-    }
-
-     public function getStreet(): string
-    {
-        return $this->street;
-    }
-
-
-    public function getStreetnumber(): string
-    {
-        return $this->streetnumber;
-    }
-
-    function testmail(){
-        if (!filter_var($this->email, FILTER_VALIDATE_EMAIL)) {
-
-            self::$errors[] = "invalid email format";
-        }
-    }
-    function teststreet(){
-        if (!preg_match("/^[a-zA-Z-' ]*$/", $this->street)) {
-            self::$errors[] = "invalid street name";
-        }
-    }
-    function testcity(){
-        if (!preg_match("/^[a-zA-Z-' ]*$/", $this->city)) {
-            self::$errors[] = "invalid city name";
-        }
-    }function teststreetnum(){
-        if (!preg_match("/^[1-9][0-9]{1,4}$/", $this->streetnumber))
-        {
-            self::$errors[] = "invalid street number";
-        }
-    }
-    function testZip(){
-        if (!preg_match("/^[1-9][0-9]{0,3}$/", $this->zip)) {
-            self::$errors[] = "invalid zip code";
-        }
-    }
-    function testHub(){
-        $this->testZip();
-        $this->teststreetnum();
-        $this->teststreet();
-        $this->testmail();
-        $this->testcity();
-        if (empty(self::$errors)){
-            $_SESSION['person']= $this;
-        }
-    }
-    function test_input($data) : string
-    {
-        $data = trim($data);
-        $data = stripslashes($data);
-        $data = htmlspecialchars($data);
-        return $data;
-    }
-    function listErrors(){
-        return implode(", ", self::$errors);
-    }
-    function showAdress(){
-        return 'They will be delivered at the following address:' . "</br>" .
-            $this->zip . " " . $this->city . ", " . $this->street . " street " . $this->streetnumber . "</br>";
-    }
-}
 if (isset($_POST['products']))
 {
-    whatIsHappening();
     $person = new Person( $_POST['email'], $_POST['zipcode'], $_POST['city'], $_POST['street'], $_POST['streetnumber']);
 
     $listProducts = array();
@@ -276,7 +139,7 @@ if (valid() !== "undefined" && valid() == true) {
       $person->showAdress() .
 
         'today around ' . "<strong>" . $delivery . " </strong></br></br>" .
-        'the sum is: ' . "<strong>" . Product::$totalPrice . "€" . $delcost . "</strong>";
+        'the sum is: ' . "<strong>" . Product::$totalPrice . "€ " . $delcost . "</strong>";
 }
 require 'form-view.php';
 
