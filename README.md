@@ -1,11 +1,16 @@
 # Order form
 
+##goals
 
 - Be able to tell the difference between the superglobals
 - Be able to write basic validation for PHP.
-- Be able to send an email with PHP
+- *Be able to send an email with PHP* not important, but a successful order still shows a message with the infos.
 
 ---
+##Status:Done with the exercise
+
+First started with simple arrays and functions, then changed the products to objects, then also the person (this was a great challenge). The changes can be followed through the version history.
+
 
 ## Required features
 - [x] Step 1: Validation
